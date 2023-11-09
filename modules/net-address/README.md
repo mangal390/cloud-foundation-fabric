@@ -16,7 +16,7 @@ module "addresses" {
   }
   global_addresses = ["app-1", "app-2"]
 }
-# tftest modules=1 resources=4 inventory=external.yaml
+# tftest modules=1 resources=4 inventory=external.yaml e2e
 ```
 
 ### Internal addresses
@@ -32,13 +32,13 @@ module "addresses" {
       subnetwork = var.subnet.self_link
     }
     ilb-2 = {
-      address    = "10.0.0.2"
+      address    = "10.0.16.4"
       region     = var.region
       subnetwork = var.subnet.self_link
     }
   }
 }
-# tftest modules=1 resources=2 inventory=internal.yaml
+# tftest modules=1 resources=2 inventory=internal.yaml e2e
 ```
 
 ### PSA addresses
@@ -55,7 +55,7 @@ module "addresses" {
     }
   }
 }
-# tftest modules=1 resources=1 inventory=psa.yaml
+# tftest modules=1 resources=1 inventory=psa.yaml e2e
 ```
 
 ### PSC addresses
@@ -66,7 +66,7 @@ module "addresses" {
   project_id = var.project_id
   psc_addresses = {
     one = {
-      address = null
+      address = "10.1.0.2"
       network = var.vpc.self_link
     }
     two = {
@@ -75,7 +75,7 @@ module "addresses" {
     }
   }
 }
-# tftest modules=1 resources=2 inventory=psc.yaml
+# tftest modules=1 resources=2 inventory=psc.yaml e2e
 ```
 
 # IPSec Interconnect addresses
@@ -99,7 +99,7 @@ module "addresses" {
     }
   }
 }
-# tftest modules=1 resources=2 inventory=ipsec-interconnect.yaml
+# tftest modules=1 resources=2 inventory=ipsec-interconnect.yaml e2e
 ```
 <!-- BEGIN TFDOC -->
 ## Variables
