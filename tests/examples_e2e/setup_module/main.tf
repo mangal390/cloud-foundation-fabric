@@ -37,6 +37,7 @@ locals {
     "storage-component.googleapis.com",
     "storage.googleapis.com",
     "vpcaccess.googleapis.com",
+    "accesscontextmanager.googleapis.com"
   ]
 }
 

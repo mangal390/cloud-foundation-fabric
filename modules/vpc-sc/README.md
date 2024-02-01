@@ -27,7 +27,7 @@ module "test" {
   source        = "./fabric/modules/vpc-sc"
   access_policy = null
   access_policy_create = {
-    parent = "organizations/123456"
+    parent = var.organization_id
     title  = "vpcsc-policy"
   }
 }
@@ -43,9 +43,9 @@ module "test" {
   source        = "./fabric/modules/vpc-sc"
   access_policy = null
   access_policy_create = {
-    parent = "organizations/123456"
+    parent = var.organization_id
     title  = "vpcsc-policy"
-    scopes = ["folders/456789"]
+    scopes = [var.folder_id]
   }
 }
 # tftest modules=1 resources=1 inventory=scoped-access-policy.yaml
@@ -58,14 +58,14 @@ The usual IAM interface is also implemented here, and can be used with service a
 ```hcl
 module "test" {
   source        = "./fabric/modules/vpc-sc"
-  access_policy = "12345678"
+  access_policy = module.vpc-sc-access-policy.id
   iam = {
     "roles/accesscontextmanager.policyAdmin" = [
-      "user:foo@example.org"
+      var.service_account.iam_email
     ]
   }
 }
-# tftest modules=1 resources=1
+# tftest modules=1 resources=1 fixtures=fixtures/vpc-sc.tf
 ```
 
 ### Access levels
@@ -75,11 +75,11 @@ As highlighted above, the `access_levels` type replicates the underlying resourc
 ```hcl
 module "test" {
   source        = "./fabric/modules/vpc-sc"
-  access_policy = "12345678"
+  access_policy = module.vpc-sc-access-policy.id
   access_levels = {
     a1 = {
       conditions = [
-        { members = ["user:user1@example.com"] }
+        { members = [var.service_account.iam_email] }
       ]
     }
     a2 = {
@@ -91,7 +91,7 @@ module "test" {
     }
   }
 }
-# tftest modules=1 resources=2 inventory=access-levels.yaml
+# tftest modules=1 resources=2 fixtures=fixtures/vpc-sc.tf inventory=access-levels.yaml
 ```
 
 ### Service perimeters
@@ -122,7 +122,7 @@ module "test" {
     }
   }
 }
-# tftest modules=1 resources=2 inventory=bridge.yaml
+# tftest modules=1 resources=2 inventory=bridge.yaml e2e
 ```
 
 #### Regular type
@@ -134,12 +134,12 @@ module "test" {
   access_levels = {
     a1 = {
       conditions = [
-        { members = ["user:user1@example.com"] }
+        { members = [var.service_account.iam_email] }
       ]
     }
     a2 = {
       conditions = [
-        { members = ["user:user2@example.com"] }
+        { members = [var.service_account.iam_email] }
       ]
     }
   }
@@ -148,7 +148,7 @@ module "test" {
     gcs-sa-foo = {
       from = {
         identities = [
-          "serviceAccount:foo@myproject.iam.gserviceaccount.com"
+          var.service_account.iam_email
         ]
       }
       to = {
@@ -165,7 +165,7 @@ module "test" {
     sa-tf-test = {
       from = {
         identities = [
-          "serviceAccount:test-tf@myproject.iam.gserviceaccount.com",
+          var.service_account.iam_email",
         ]
         access_levels = ["*"]
       }
